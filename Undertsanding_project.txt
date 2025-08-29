@@ -1,0 +1,76 @@
+1) One-time setup when files are uploaded
+
+This happens the first time you call your chatbot with files.
+
+Your code path
+
+docs = load_documents(files) → read PDFs/DOCX/TXT/CSV/XLSX
+
+vectorstore = process_documents(docs)
+
+split → semantic or size-based
+
+embed each chunk (HuggingFaceEmbeddings)
+
+store in FAISS
+
+qa_chain = create_chain(vectorstore)
+
+builds ConversationalRetrievalChain with:
+
+LLM (ChatGroq)
+
+Retriever (vectorstore.as_retriever(k=8))
+
+Prompt (your template with {context} + {question})
+
+Memory (ConversationBufferMemory)
+
+✅ After this, vectorstore and qa_chain are global and ready.
+
+2) Every time the user asks a question
+
+This happens on each user query.
+
+Your call
+
+result = qa_chain.invoke({"question": question})
+
+
+What happens inside that single line:
+
+Query embedding (automatic)
+
+The retriever takes the user’s question
+
+Makes an embedding (same model used for docs)
+
+Similarity search (automatic)
+
+Searches that embedding in FAISS
+
+Pulls top k=8 most similar chunks
+
+Augmentation / Prompt assembly (automatic)
+
+Fills your prompt_template:
+
+{context} ← the retrieved chunks (joined)
+
+{question} ← the user’s question
+
+LLM call (automatic)
+
+Sends the assembled prompt to ChatGroq
+
+Gets the answer
+
+Memory update (automatic)
+
+Saves this Q/A turn in ConversationBufferMemory
+
+Return
+
+result["answer"] is given back to your code
+
+⚠️ Note: You don’t see query-embedding or similarity-search in your code because the retriever inside the chain does it automatically.
