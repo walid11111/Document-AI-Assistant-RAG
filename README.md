@@ -1,4 +1,4 @@
-# 🤖 Document AI Assistant (RAG-based)
+# 🤖 Document-AI-Assistant-RAG
 
 An intelligent **Retrieval-Augmented Generation (RAG) Document AI Assistant** that turns your documents into interactive conversations.  
 Upload **PDF, DOCX, TXT, PPTX, CSV, XLSX** files and ask questions in **English**.  
@@ -133,3 +133,4 @@ python-dotenv>=1.0.0
 env
 Copy code
 GROQ_API_KEY=your_groq_api_key_here
+
